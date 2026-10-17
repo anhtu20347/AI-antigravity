@@ -1,0 +1,14 @@
+# Temporary office files
+~$*.docx
+~$*.doc
+~$*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE & OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
