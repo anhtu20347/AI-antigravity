@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #F8FAFC;
+  --foreground: #2D2A4A;
+  --ink: #2D2A4A;
+  --lav: #D9C9FF;
+  --mint: #BFF1DC;
+  --peach: #FFD2D0;
+  --butter: #FFF1B8;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  background-image: 
+    radial-gradient(at 10% 8%, var(--lav) 0, transparent 35%),
+    radial-gradient(at 90% 12%, var(--mint) 0, transparent 35%),
+    radial-gradient(at 85% 88%, var(--peach) 0, transparent 35%),
+    radial-gradient(at 10% 90%, var(--butter) 0, transparent 35%);
+  background-attachment: fixed;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  min-height: 100vh;
+}
+
+/* Card retro-border style */
+.card-retro {
+  background: #ffffff;
+  color: #2D2A4A;
+  border: 3px solid #2D2A4A;
+  border-radius: 1.25rem;
+  box-shadow: 0 5px 0 #2D2A4A;
+  transition: all 0.15s ease-in-out;
+}
+
+/* Button retro style */
+.btn-retro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  color: #2D2A4A;
+  background: #FFF1B8;
+  border: 2.5px solid #2D2A4A;
+  border-radius: 0.85rem;
+  box-shadow: 0 4px 0 #2D2A4A;
+  padding: 0.5rem 1rem;
+  transition: all 0.12s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-retro:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #2D2A4A;
+}
+
+.btn-retro:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #2D2A4A;
+}
+
+.btn-retro:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid #2D2A4A;
+  border-radius: 9999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
