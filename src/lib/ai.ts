@@ -7,24 +7,6 @@ const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 export const isAIConfigured = Boolean(apiKey && apiKey.length > 10);
 
-/** Calls the configured Gemini model without silently substituting demo output. */
-export async function callGeminiJSON(
-  prompt: string,
-  systemInstruction: string,
-): Promise<string> {
-  if (!genAI) throw new Error('AI_NOT_CONFIGURED');
-
-  const model = genAI.getGenerativeModel({
-    model: modelName,
-    systemInstruction,
-    generationConfig: { responseMimeType: 'application/json' },
-  });
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
-  if (!text.trim()) throw new Error('AI_EMPTY_RESPONSE');
-  return text;
-}
-
 /**
  * Gọi AI tạo nội dung text hoặc JSON
  */

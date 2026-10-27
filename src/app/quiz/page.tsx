@@ -28,14 +28,9 @@ declare global {
 
 export default function QuizPage() {
   const [questions, setQuestions] = useState<QuizQuestion[]>(SEED_QUIZZES);
-  const [generatedQuestions, setGeneratedQuestions] = useState<QuizQuestion[]>([]);
-  const [quizSource, setQuizSource] = useState<'available' | 'gemini'>('available');
   const [filteredQuestions, setFilteredQuestions] = useState<QuizQuestion[]>(SEED_QUIZZES);
   const [selectedChapter, setSelectedChapter] = useState<number | 'all'>('all');
   const [selectedDiff, setSelectedDiff] = useState<string | 'all'>('all');
-  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-  const [aiNotice, setAiNotice] = useState<string | null>(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -55,7 +50,7 @@ export default function QuizPage() {
 
   // Filter effect
   useEffect(() => {
-    let list = [...(quizSource === 'gemini' ? generatedQuestions : questions)];
+    let list = [...questions];
     if (selectedChapter !== 'all') {
       list = list.filter((q) => q.chapter === selectedChapter);
     }
@@ -66,7 +61,7 @@ export default function QuizPage() {
     setCurrentIndex(0);
     setSelectedOption(null);
     setIsAnswered(false);
-  }, [selectedChapter, selectedDiff, questions, generatedQuestions, quizSource]);
+  }, [selectedChapter, selectedDiff, questions]);
 
   // MathJax re-render
   useEffect(() => {
@@ -109,45 +104,6 @@ export default function QuizPage() {
       });
     } catch (e) {
       console.warn('History save ignored:', e);
-    }
-  };
-
-  const handleGenerateAIQuiz = async () => {
-    if (selectedChapter === 'all') {
-      setAiError('Chọn một chương để Gemini tạo câu hỏi theo đúng nội dung.');
-      return;
-    }
-
-    setIsGeneratingAI(true);
-    setAiError(null);
-    setAiNotice(null);
-    try {
-      const response = await fetch('/api/quiz/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chapter: selectedChapter,
-          difficulty: selectedDiff === 'all' ? 'Vận dụng' : selectedDiff,
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(typeof data.error === 'string' ? data.error : 'Chưa thể tạo câu hỏi bằng Gemini.');
-      }
-
-      setGeneratedQuestions(data.questions);
-      setQuizSource('gemini');
-      setSelectedDiff('all');
-      setCurrentIndex(0);
-      setSelectedOption(null);
-      setIsAnswered(false);
-      setScore(0);
-      setStreak(0);
-      setAiNotice(`Gemini đã tạo và kiểm tra 5 câu mới cho Chương ${selectedChapter}.`);
-    } catch (error) {
-      setAiError(error instanceof Error ? error.message : 'Không thể kết nối Gemini.');
-    } finally {
-      setIsGeneratingAI(false);
     }
   };
 
@@ -266,35 +222,7 @@ export default function QuizPage() {
         <div className="text-xs font-mono text-gray-500">
           Tổng số: <strong>{filteredQuestions.length} câu</strong>
         </div>
-        {quizSource === 'gemini' && (
-          <button
-            type="button"
-            onClick={() => setQuizSource('available')}
-            className="retro-btn bg-white text-ink font-bold text-xs py-2 px-3"
-          >
-            Câu hỏi có sẵn
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={handleGenerateAIQuiz}
-          disabled={isGeneratingAI || selectedChapter === 'all'}
-          aria-busy={isGeneratingAI}
-          className="retro-btn bg-ink text-white font-bold text-xs py-2 px-4 flex items-center gap-2 disabled:opacity-50"
-        >
-          <Sparkles className="w-4 h-4" aria-hidden="true" />
-          {isGeneratingAI ? 'Gemini đang tạo…' : 'Tạo 5 câu mới bằng Gemini'}
-        </button>
       </div>
-      {(aiError || aiNotice || selectedChapter === 'all') && (
-        <div className="mb-5 text-sm" role={aiError ? 'alert' : 'status'}>
-          {aiError && <p className="text-red-700">{aiError}</p>}
-          {aiNotice && <p className="text-emerald-800">{aiNotice}</p>}
-          {!aiError && !aiNotice && selectedChapter === 'all' && (
-            <p className="text-gray-600">Chọn một chương để bật chức năng tạo câu hỏi bằng Gemini.</p>
-          )}
-        </div>
-      )}
 
       {/* Main Question Card */}
       {filteredQuestions.length === 0 ? (
